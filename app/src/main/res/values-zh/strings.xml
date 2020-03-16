@@ -12,7 +12,7 @@
     <string name="new_crime">新增 crime 记录</string>
     <string name="show_subtitle">显示子标题</string>
     <string name="hide_subtitle">隐藏子标题</string>
-    <string name="subtitle_format">%1$s</string>
+    <string name="subtitle_format">%1$ds</string>
     <string name="crime_suspect_text">嫌疑人联系方式</string>
     <string name="crime_report_text">抗议或投诉</string>
     <string name="crime_report">插%1$s! crime 发生于 %2$s. %3$s, y, %4$s</string>

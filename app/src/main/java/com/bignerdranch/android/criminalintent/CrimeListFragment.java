@@ -33,6 +33,7 @@ public class CrimeListFragment extends Fragment {
     private static final int REQUEST_CRIME = 1;
     private boolean mSubtitleVisible;
     private Callbacks mCallbacks;
+    private static Context mContext;
     private static final String SAVED_SUBTITLE_VISIBLE = "subtitle";
 
 
@@ -41,6 +42,10 @@ public class CrimeListFragment extends Fragment {
      */
     public interface Callbacks{
         void onCrimeSelected(Crime crime);
+    }
+
+    public static Context getTheContext(){
+        return mContext;
     }
 
     @Override
@@ -59,6 +64,7 @@ public class CrimeListFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        mContext = getActivity();
     }
 
     @Nullable

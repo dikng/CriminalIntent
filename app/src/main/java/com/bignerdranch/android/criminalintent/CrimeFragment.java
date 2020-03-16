@@ -62,6 +62,7 @@ public class CrimeFragment extends Fragment {
     private ImageButton mPhotoButton;
     private ImageView mPhotoView;
     private Callbacks mCallbacks;
+    private Button mDeleteButton;
 
     /**
      * Required interface for hosting activities
@@ -226,6 +227,17 @@ public class CrimeFragment extends Fragment {
                 intent.putExtra(DiaplayCrimePhoto.PHOTO_UUID, mCrime.getId());
 
                 startWithTransition(getActivity(), intent, view);
+            }
+        });
+
+        mDeleteButton = view.findViewById(R.id.delete_crime);  //删除制定Crime
+        mDeleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Context mContext = CrimeListFragment.getTheContext();
+                CrimeLab crimeLab = CrimeLab.get(mContext);
+                crimeLab.deleteCrime(mCrime);
+                getActivity().finish();
             }
         });
         updatePhotoView();

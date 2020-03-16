@@ -1,5 +1,6 @@
 package com.bignerdranch.android.criminalintent;
 
+import android.content.Context;
 import android.content.Intent;
 
 import androidx.fragment.app.Fragment;
@@ -36,4 +37,5 @@ public class CrimeListActivity extends SingleFragmentActivity
                     .commit();
         }
     }
+
 }
