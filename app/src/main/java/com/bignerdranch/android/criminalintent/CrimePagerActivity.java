@@ -10,15 +10,20 @@ import androidx.viewpager.widget.ViewPager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 
 import java.util.List;
 import java.util.UUID;
 
-public class CrimePagerActivity extends AppCompatActivity implements CrimeFragment.Callbacks{
+public class CrimePagerActivity extends AppCompatActivity implements CrimeFragment.Callbacks {
     private static final String EXTRA_CRIME_ID = "com.bignerdranch.android.criminalintent.crime_id";
 
     private ViewPager mViewPager;
     private List<Crime> mCrimes;
+    private Button jumpToFirst;
+    private Button jumpToLast;
 
 
     @Override
@@ -40,6 +45,24 @@ public class CrimePagerActivity extends AppCompatActivity implements CrimeFragme
         UUID crimeId = (UUID) getIntent().getSerializableExtra(EXTRA_CRIME_ID);
 
         mViewPager = findViewById(R.id.activity_crime_pager_view_pager);
+        jumpToFirst = findViewById(R.id.first_page);
+        jumpToLast = findViewById(R.id.last_page);
+        jumpToLast.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                mViewPager.setCurrentItem(mCrimes.size() - 1, true);
+                jumpToLast.setEnabled(false);
+                jumpToFirst.setEnabled(true);
+            }
+        });
+        jumpToFirst.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mViewPager.setCurrentItem(0, true);
+                jumpToFirst.setEnabled(false);
+                jumpToLast.setEnabled(true);
+            }
+        });
 
         mCrimes = CrimeLab.get(this).getCrimes();
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -52,6 +75,8 @@ public class CrimePagerActivity extends AppCompatActivity implements CrimeFragme
             public Fragment getItem(int position) {
                 //将CrimeFragment 实例返回给CrimePagerActivity适配器进行绑定
                 Crime crime = mCrimes.get(position);
+                updateJumpButton(position);
+                Log.d("aaa", "getItem()");
                 return CrimeFragment.newInstance(crime.getId());
             }
 
@@ -64,8 +89,22 @@ public class CrimePagerActivity extends AppCompatActivity implements CrimeFragme
         for(int i = 0; i < mCrimes.size(); i++){
             if(mCrimes.get(i).getId().equals(crimeId)){
                 mViewPager.setCurrentItem(i);
+                updateJumpButton(i);
                 break;
             }
+        }
+    }
+
+    private void updateJumpButton(int i){
+        if(i == 0){
+            jumpToFirst.setEnabled(false);
+            jumpToLast.setEnabled(true);
+        }else if(i == mCrimes.size() - 1){
+            jumpToLast.setEnabled(false);
+            jumpToFirst.setEnabled(true);
+        }else{
+            jumpToLast.setEnabled(true);
+            jumpToFirst.setEnabled(true);
         }
     }
 }
