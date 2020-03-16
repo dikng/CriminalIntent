@@ -69,20 +69,37 @@ public class CrimePagerActivity extends AppCompatActivity implements CrimeFragme
 
 
         //FragmentStatePagerAdapter单参数构造函数被废弃
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                updateJumpButton(position);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
         mViewPager.setAdapter(new FragmentStatePagerAdapter(fragmentManager, 2) {
             @NonNull
             @Override
             public Fragment getItem(int position) {
                 //将CrimeFragment 实例返回给CrimePagerActivity适配器进行绑定
                 Crime crime = mCrimes.get(position);
-                updateJumpButton(position);
-                Log.d("aaa", "getItem()");
+                Log.d("aaa", position + "");
                 return CrimeFragment.newInstance(crime.getId());
             }
 
             @Override
             public int getCount() {
+                Log.d("aaa", mCrimes.size() + "");
                 return mCrimes.size();
+
             }
         });
 
