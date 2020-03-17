@@ -113,6 +113,11 @@ public class CrimePagerActivity extends AppCompatActivity implements CrimeFragme
     }
 
     private void updateJumpButton(int i){
+        if(mCrimes.size() == 1){  //如果当前只有一条Crime记录，则两个跳转按钮都失效
+            jumpToFirst.setEnabled(false);
+            jumpToLast.setEnabled(false);
+            return;
+        }
         if(i == 0){
             jumpToFirst.setEnabled(false);
             jumpToLast.setEnabled(true);

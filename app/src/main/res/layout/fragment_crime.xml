@@ -92,6 +92,8 @@
         android:textAllCaps="false"
         android:text="Delete Crime"
         android:layout_marginBottom="16dp"
+        android:background="#FF4027"
+        android:textColor="#ffff"
         />
 
     <Button

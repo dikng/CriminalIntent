@@ -234,6 +234,7 @@ public class CrimeFragment extends Fragment {
         mDeleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 Context mContext = CrimeListFragment.getTheContext();
                 CrimeLab crimeLab = CrimeLab.get(mContext);
                 crimeLab.deleteCrime(mCrime);
