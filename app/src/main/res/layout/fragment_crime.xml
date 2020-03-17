@@ -106,6 +106,15 @@
         />
 
     <Button
+        android:id="@+id/call_suspect"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAllCaps="false"
+        android:text="Call Suspect"
+        android:layout_marginBottom="16dp"
+        />
+
+    <Button
         android:id="@+id/crime_report"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

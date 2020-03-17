@@ -1,6 +1,7 @@
 package com.bignerdranch.android.criminalintent;
 
 
+import android.Manifest;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
@@ -15,6 +16,7 @@ import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
@@ -51,6 +53,7 @@ public class CrimeFragment extends Fragment {
     private static final int REQUEST_DATE = 0;
     private static final int REQUEST_CONTACT = 1;
     private static final int REQUEST_PHOTO = 2;
+    private static final int REQUEST_READ_CONTRACTS = 3;
 
     private Crime mCrime;
     private File mPhotoFile;
@@ -63,6 +66,7 @@ public class CrimeFragment extends Fragment {
     private ImageView mPhotoView;
     private Callbacks mCallbacks;
     private Button mDeleteButton;
+    private Button mCallSuspect;
 
     /**
      * Required interface for hosting activities
@@ -241,6 +245,23 @@ public class CrimeFragment extends Fragment {
                 getActivity().finish();
             }
         });
+
+        mCallSuspect = view.findViewById(R.id.call_suspect);   //直接呼叫suspect
+        mCallSuspect.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                String buttonText = getString(R.string.crime_suspect_text);   //先判断suspect是否为空
+                if(mSuspectButton.getText().toString().equals(buttonText)){
+                    Toast.makeText(getActivity(), "suspect为空！", Toast.LENGTH_SHORT).show();
+                }
+                else if(getActivity().checkSelfPermission(Manifest.permission.READ_CONTACTS ) != PackageManager.PERMISSION_GRANTED){
+                    requestPermissions(new String[]{Manifest.permission.READ_CONTACTS},
+                            REQUEST_READ_CONTRACTS);
+                }else {
+                    callSuspect();
+                }
+            }
+        });
         updatePhotoView();
         return view;
     }
@@ -268,7 +289,7 @@ public class CrimeFragment extends Fragment {
                 if(c.getCount() == 0){
                     return;
                 }
-                /*Pull out the first column of the first row of data that is your suspect's name*/
+                /*Pull out the first column of the first row of data that    is your suspect's name*/
                 c.moveToFirst();
                 String suspect = c.getString(0);
                 mCrime.setSuspect(suspect);
@@ -349,4 +370,46 @@ public class CrimeFragment extends Fragment {
         MenuInflater inflater = getActivity().getMenuInflater();
         inflater.inflate(R.menu.fragment_crime_list, menu);
     }*/
+
+    //根据suspect姓名查询相关电话号码，根据查询结果选择打开拨号界面或者弹出提示
+    private void callSuspect(){
+        String[] queryFields = new String[]{ContactsContract.CommonDataKinds.Phone.NUMBER};
+        Cursor cursor = getContext().getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                queryFields,
+                ContactsContract.PhoneLookup.DISPLAY_NAME + "= ?",
+                new String[]{mSuspectButton.getText().toString()},
+                null);  //根据联系人姓名查询电话号码
+        if(cursor == null || cursor.getCount() == 0){
+            Toast.makeText(getActivity(), "查询失败", Toast.LENGTH_SHORT).show();
+        }else{
+            cursor.moveToFirst();
+            if(!cursor.isAfterLast()){
+                //String telNumber = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                String telNumber = cursor.getString(0);
+                //Toast.makeText(getActivity(), telNumber, Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(Intent.ACTION_DIAL);
+                intent.setData(Uri.parse("tel:" + telNumber));
+                startActivity(intent);
+            }
+        }
+        cursor.close();
+    }
+
+
+    //验证权限获取结果
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch(requestCode){
+            case REQUEST_READ_CONTRACTS:
+                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    callSuspect();
+                }
+                else{
+                    Toast.makeText(getActivity(), "拒绝读取联系人资料将无法拨打嫌疑人的电话", Toast.LENGTH_SHORT).show();
+                }
+                break;
+            default:
+                break;
+        }
+    }
 }
