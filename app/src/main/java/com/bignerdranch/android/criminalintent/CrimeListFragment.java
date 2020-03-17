@@ -165,14 +165,15 @@ public class CrimeListFragment extends Fragment {
             mAddCrimeButton.setVisibility(View.GONE);
             mCrimeRecyclerView.setVisibility(View.VISIBLE);
         }
+
         if(mAdapter == null){
             mAdapter = new CrimeAdapter(crimes);
             mCrimeRecyclerView.setAdapter(mAdapter);
         }else{
-
-            mAdapter.notifyItemChanged(clickedPosition);
+            mAdapter.setCrimes(crimes);
+            mAdapter.notifyDataSetChanged();
+           // mAdapter.notifyItemChanged(clickedPosition); // 删除crime导致的mAdapter顺序改变可能会导致软件崩溃
         }
-        mAdapter.setCrimes(crimes);
         updateSubtitle();
     }
 

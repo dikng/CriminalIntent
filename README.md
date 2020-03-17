@@ -5,9 +5,13 @@
   - 在CrimePageActivity 中增加跳转按钮，可直接跳转至第一条和最后一条crime
   - 增加在CrimeFragment中删除当前Crime的功能
   - 增加Crime为空时的空白提示和添加新Crime快捷按钮
-
+  - 增加拨打嫌疑人电话功能
 
 ### 未解决Bug
-  - 删除Crime记录时，偶尔会出现软件崩溃
+  - ~~删除非末端Crime记录时，会出现软件崩溃~~
 
-### 已解决Bug
+### 需要优化
+  - 目前无论是增加Crime还是修改已有Crime都在updateUi()中调用notifyDataSetChanged()更新全部ViewHolder，
+    但调用mAdapter.notifyItemChanged(clickedPosition)会在删除非末端Crime记录时，因为clickedPositon可
+    能溢出而导致程序崩溃。需要根据对CrimeFragment中是删除还是修改进行判断，在选择相关刷新操作。
+
