@@ -49,11 +49,13 @@ public class CrimeFragment extends Fragment {
 
     private static final String ARG_CRIME_ID = "crime_id";
     private static final String DIALOG_DATE = "DialogDate";
+    private static final String DIALOG_PHOTO = "dialogPhoto";
 
     private static final int REQUEST_DATE = 0;
     private static final int REQUEST_CONTACT = 1;
     private static final int REQUEST_PHOTO = 2;
     private static final int REQUEST_READ_CONTRACTS = 3;
+    private static final int CLICK_PHOTO = 4;
 
     private Crime mCrime;
     private File mPhotoFile;
@@ -202,8 +204,7 @@ public class CrimeFragment extends Fragment {
         mPhotoButton = view.findViewById(R.id.crime_camera);
         final Intent captureImage = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
-        boolean canTakePhoto = mPhotoFile != null &&
-                captureImage.resolveActivity(packageManager) != null;
+        boolean canTakePhoto = mPhotoFile != null && captureImage.resolveActivity(packageManager) != null;  //判断是否有可调用软件
         mPhotoButton.setEnabled(canTakePhoto);
         mPhotoButton.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -225,12 +226,20 @@ public class CrimeFragment extends Fragment {
         });
         mPhotoView = view.findViewById(R.id.crime_photo);
         mPhotoView.setOnClickListener(new View.OnClickListener() {
+
+            /**
+             *如何当前Crime含有图片，则打开一个PhotoFragment展示图片细节，否则使用Toast提醒无相关图片
+             */
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), DiaplayCrimePhoto.class);
-                intent.putExtra(DiaplayCrimePhoto.PHOTO_UUID, mCrime.getId());
-
-                startWithTransition(getActivity(), intent, view);
+                if(mPhotoFile == null || !mPhotoFile.exists()){
+                    Toast.makeText(getActivity(), "Crime Photo 不存在", Toast.LENGTH_SHORT).show();
+                }{
+                    FragmentManager manager = getFragmentManager();
+                    PhotoFragment dialog = PhotoFragment.newInstance(mCrime.getId());
+                    dialog.setTargetFragment(CrimeFragment.this, CLICK_PHOTO);
+                    dialog.show(manager, DIALOG_PHOTO);
+                }
             }
         });
 
