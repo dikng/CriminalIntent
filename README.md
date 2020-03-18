@@ -6,6 +6,8 @@
   - 增加在CrimeFragment中删除当前Crime的功能
   - 增加Crime为空时的空白提示和添加新Crime快捷按钮
   - 增加拨打嫌疑人电话功能
+  - 使用PhotoFragment替换DisplaPhotoyActivity，以弹窗方式展示图片详情
+  - 增加滑动删除和拖拽移动，但拖拽只是改变当前数据库视图，数据库中数据没有发生改变
 
 ### 未解决Bug
   - ~~删除非末端Crime记录时，会出现软件崩溃~~

@@ -2,7 +2,6 @@ package com.bignerdranch.android.criminalintent;
 
 
 import android.Manifest;
-import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -16,10 +15,7 @@ import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -104,8 +100,6 @@ public class CrimeFragment extends Fragment {
         UUID crimeId = (UUID)getArguments().getSerializable(ARG_CRIME_ID);
         mCrime = CrimeLab.get(getActivity()).getCrime(crimeId);
         mPhotoFile = CrimeLab.get(getActivity()).getPhotoFile(mCrime);
-
-
     }
 
     public void returnResult(){
@@ -234,7 +228,7 @@ public class CrimeFragment extends Fragment {
             public void onClick(View v) {
                 if(mPhotoFile == null || !mPhotoFile.exists()){
                     Toast.makeText(getActivity(), "Crime Photo 不存在", Toast.LENGTH_SHORT).show();
-                }{
+                }else{
                     FragmentManager manager = getFragmentManager();
                     PhotoFragment dialog = PhotoFragment.newInstance(mCrime.getId());
                     dialog.setTargetFragment(CrimeFragment.this, CLICK_PHOTO);

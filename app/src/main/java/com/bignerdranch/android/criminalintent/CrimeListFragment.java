@@ -18,10 +18,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.text.DateFormat;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -45,6 +47,13 @@ public class CrimeListFragment extends Fragment {
      */
     public interface Callbacks{
         void onCrimeSelected(Crime crime);
+    }
+
+    public interface ItemTouchStatus {
+
+        boolean onItemMove(int fromPosition, int toPosition);
+
+        boolean onItemRemove(int position);
     }
 
     public static Context getTheContext(){
@@ -74,8 +83,8 @@ public class CrimeListFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_crime_list, container, false);
-
         mCrimeRecyclerView = view.findViewById(R.id.crime_recycler_view);
+
         mCrimeRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         if(savedInstanceState != null){
             mSubtitleVisible = savedInstanceState.getBoolean(SAVED_SUBTITLE_VISIBLE);
@@ -89,6 +98,8 @@ public class CrimeListFragment extends Fragment {
             }
         });
         updateUI();
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new CrimeItemTouchCallback(mAdapter));   //将ItemTouchHelper绑定至recyclerView
+        itemTouchHelper.attachToRecyclerView(mCrimeRecyclerView);
         return view;
     }
 
@@ -209,11 +220,27 @@ public class CrimeListFragment extends Fragment {
         }
     }
 
-    private class CrimeAdapter extends RecyclerView.Adapter<CrimeHolder>{
+    private class CrimeAdapter extends RecyclerView.Adapter<CrimeHolder> implements ItemTouchStatus{
         private List<Crime> mCrimes;
 
         public CrimeAdapter(List<Crime> crimes){
             mCrimes = crimes;
+        }
+
+        @Override
+        public boolean onItemMove(int fromPosition, int toPosition) {  //只是将数据库中的一个视图中的数据进行交换
+            Collections.swap(mCrimes, fromPosition, toPosition);
+            notifyItemMoved(fromPosition, toPosition);
+            return true;
+        }
+
+        @Override
+        public boolean onItemRemove(int position) {
+            CrimeLab crimeLab = CrimeLab.get(getContext());
+            crimeLab.deleteCrime(mCrimes.get(position));
+            mCrimes.remove(position);
+            notifyItemRemoved(position);
+            return false;
         }
 
         @NonNull
@@ -246,4 +273,5 @@ public class CrimeListFragment extends Fragment {
         updateUI();
         mCallbacks.onCrimeSelected(crime);
     }
+
 }
